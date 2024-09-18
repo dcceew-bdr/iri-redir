@@ -36,10 +36,11 @@ if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path:
         python_dirs = (base_dir / ".python_packages" / "lib").glob("python*")
         for p in python_dirs:
             if p.is_dir():
-                root_logger.debug(f"Adding {p} to sys.path")
+                new_sys_path = f"{p}/site-packages"
+                root_logger.debug(f"Adding {new_sys_path} to sys.path")
                 h.flush()
-                print_console_error(f"Adding {p} to sys.path")
-                sys.path.insert(0, str(p))
+                print_console_error(f"Adding {new_sys_path} to sys.path")
+                sys.path.insert(0, str(new_sys_path))
                 break
         else:
             raise RuntimeError("Cannot find python site-packages in .python_packages/lib/*")
@@ -57,7 +58,7 @@ try:
     from src.factory import create_app
 except ImportError as e:
     import traceback
-    formatted_exc = traceback.format_exc(e).replace("\n", "|")
+    formatted_exc = traceback.format_exc().replace("\n", "|")
     print_console_error(f"ImportError: {e}, {formatted_exc}")
     root_logger.exception("Importing src.factory")
     create_app = None
