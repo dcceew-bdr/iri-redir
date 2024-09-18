@@ -14,6 +14,8 @@ if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "y
 #---------------------------------------------------
 
 #------- Fix up Python Path for site-packages and local dir -------
+existing_sys_path = '\n'.join(sys.path)
+root_logger.info(f"Current sys.path:\n{existing_sys_path}")
 base_dir = Path(__file__).resolve().parent
 if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path or \
         ".python_packages/lib/site-packages" in sys.path:
@@ -32,6 +34,7 @@ if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path or \
             raise RuntimeError("Cannot find python site-packages in .python_packages/lib/*")
 if "." not in sys.path or str(base_dir) not in sys.path:
     # Add the base dir here to the path, so it can find "src" package
+    root_logger.info(f"Adding {base_dir} to sys.path")
     sys.path.insert(0, str(base_dir))
 #---------------------------------------------------
 
@@ -40,12 +43,12 @@ from azure.functions import HttpRequest
 try:
     from src.factory import create_app
 except ImportError as e:
-    logging.exception("Importing src.factory")
+    root_logger.exception("Importing src.factory")
     create_app = None
 
 
 if create_app is None:
-    logging.error(
+    root_logger.error(
       "Cannot import src in the Azure function app. Check requirements.py and deployment logs."
     )
     raise RuntimeError(
