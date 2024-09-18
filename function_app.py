@@ -1,13 +1,20 @@
+import sys
 import logging
+import os
 root_logger = logging.getLogger()
-root_logger.setLevel(logging.DEBUG)
+h = logging.StreamHandler(sys.stderr)
+root_logger.addHandler(h)
+if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "yes")
+    root_logger.setLevel(logging.DEBUG)
+    for h in root_logger.handlers:
+        h.setLevel(logging.DEBUG)
 
 import azure.functions as func
 from azure.functions import HttpRequest
 try:
     from src.factory import create_app
 except ImportError as e:
-    logging.exception(e)
+    logging.exception("Importing src.factory")
     create_app = None
 
 
