@@ -31,8 +31,8 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install setup dependencies
+        run: pip install -U pip && pip install -r requirements.txt
 
       - name: Install testing dependencies
         run: pip install -U pytest pytest-asyncio httpx
@@ -40,8 +40,18 @@ jobs:
       - name: Run Tests
         run: env PYTHONPATH=. pytest test
 
+      - name: Create and start deployment virtual environment
+        run: |
+          deactivate
+          python -m venv .python_packages
+          source .python_packages/bin/activate
+
+      - name: Install deployment dependencies
+        run: pip install -U pip && pip install -r requirements.txt
+
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r -x "venv" -x "venv/*"  -x ".git"
+        # Zip this including the .python_packages folder, but excluding the venv folder
+        run: zip release.zip ./* -r -x "venv" -x "venv/*" -x ".git" -x "__pycache__/*" -x "*.pyc"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -49,6 +59,7 @@ jobs:
           name: python-app
           path: |
             release.zip
+            !.python_packages/
             !venv/
             !.git/
 
@@ -81,9 +92,12 @@ jobs:
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
         id: deploy-to-function
+        # On Consumption app on Linux, the only deployment option is WEBSITE_RUN_FROM_PACKAGE
+        # When WEBSITE_RUN_FROM_PACKAGE is used, then oryx and scm-do-build cannot be enabled
+        # Seo we must ensure all requirements are installed in the deployment virtual environment
         with:
           app-name: 'linked-bdr'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
+          scm-do-build-during-deployment: false
+          enable-oryx-build: false
           #slot-name: 'Production'
