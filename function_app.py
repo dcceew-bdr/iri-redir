@@ -1,13 +1,39 @@
 import sys
 import logging
 import os
+from pathlib import Path
+
+#------- Fix up Logging to Application Logger -------
 root_logger = logging.getLogger()
 h = logging.StreamHandler(sys.stderr)
 root_logger.addHandler(h)
-if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "yes")
+if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "yes"):
     root_logger.setLevel(logging.DEBUG)
     for h in root_logger.handlers:
         h.setLevel(logging.DEBUG)
+#---------------------------------------------------
+
+#------- Fix up Python Path for site-packages and local dir -------
+base_dir = Path(__file__).resolve().parent
+if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path or \
+        ".python_packages/lib/site-packages" in sys.path:
+    dest = base_dir / ".python_packages" / "lib" / "site-packages"
+    if not dest.exists():
+        root_logger.debug("Cannot find .python_packages/lib/site-packages, creating symlink")
+        # Find the python version equivalent
+        python_dirs = (base_dir / ".python_packages" / "lib").glob("python*")
+        for p in python_dirs:
+            if p.is_dir():
+                root_logger.debug(f"Symlinking {p} to {dest}")
+                new_path = Path(p) / "site-packages"
+                dest.symlink_to(new_path, target_is_directory=True)
+                break
+        else:
+            raise RuntimeError("Cannot find python site-packages in .python_packages/lib/*")
+if "." not in sys.path or str(base_dir) not in sys.path:
+    # Add the base dir here to the path, so it can find "src" package
+    sys.path.insert(0, str(base_dir))
+#---------------------------------------------------
 
 import azure.functions as func
 from azure.functions import HttpRequest
