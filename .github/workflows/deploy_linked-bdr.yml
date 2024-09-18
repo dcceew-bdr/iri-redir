@@ -60,7 +60,7 @@ jobs:
 
       - name: Zip artifact for deployment
         # Zip this including the .python_packages folder, but excluding the venv folder
-        run: zip release.zip ./* .python_packages -r -x "venv" -x "venv/*" -x ".git" -x "__pycache__/*" -x "*.pyc"
+        run: zip release.zip ./* .python_packages .funcignore -r -x "venv" -x "venv/*" -x ".git" -x "/*/__pycache__" -n pyc -n __pycache__
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
