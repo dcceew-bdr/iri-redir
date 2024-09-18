@@ -1,0 +1,8 @@
+= BDR IRI Redirect Service
+
+This is a simple Python Fast-API based service that redirects incoming traffic for linked.data.gov.au IRIs to their
+respective BDR services.
+
+It is configured using per-Host TOML configuration files.
+To add a new redirect, open a PR in this repository with the required additions to the appropriate TOML file.
+

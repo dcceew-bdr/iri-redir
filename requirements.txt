@@ -1,0 +1,27 @@
+# Why not use Poetry and pyproject.toml?
+# This codebase is designed to be run as a a serverless Azure Function App
+# The python build tooling on Oryx works better with a requirements.txt file
+# Poetry is not really well supported in Azure Functions deployments
+
+# Do not include azure-functions-worker in this file
+# The Python Worker is managed by the Azure Functions platform
+# Manually managing azure-functions-worker may cause unexpected issues
+
+azure-functions
+azure-storage-blob
+azure-identity
+cachetools
+python-dotenv
+regex>=2022.6.2
+tomli<3,>=2.0.1
+starlette<1.0,>=0.38
+# Why Starlette and not FastAPI?
+# FastAPI is a wrapper around Starlette that only adds REST, OpenAPI and pydantic support.
+# We don't need REST, OpenAPI or pydantic support, so we use Starlette directly.
+
+# Why not use uvloop and sanic?
+# Azure Functions Host uses its own C#-based backend server,
+# that has its own async event loop.
+# It is compatible with Python web services through the ASGI interface.
+# While we could use sanic for this, there is no advantage, so using
+# Starlette is a more appropriate choice.

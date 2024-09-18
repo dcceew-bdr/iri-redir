@@ -1,0 +1,1 @@
+from .iri_redirect_router import make_all_iri_redirect_routes

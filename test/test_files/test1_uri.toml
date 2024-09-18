@@ -1,0 +1,27 @@
+host = "example.com"
+default_redirect_code = 307
+default_scheme = "https"
+
+
+[[test_redirect]]
+name = "uri_style_pid_redir_to_vocab"
+comment = ""
+from = "redir?_pid=https://linked.data.gov.au/dataset/bdr/orgs"
+scheme = "https"
+headers = {accept="text/ttl"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs"
+
+[[test_redirect]]
+name = "uri_style_pid_redir_to_vocab_concept"
+comment = ""
+from = "redir?_pid=https://linked.data.gov.au/dataset/bdr/orgs/wamuseum"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs/bdr-orgs:wamuseum"
+
+[[test_redirect]]
+name = "uri_style_pid_redir_to_with_extra_mediatype"
+comment = ""
+from = "redir?_pid=https://linked.data.gov.au/dataset/bdr/orgs/wamuseum?_mediatype=text/turtle"
+scheme = "https"
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs/bdr-orgs:wamuseum?_mediatype=text%2fturtle"

@@ -1,0 +1,114 @@
+host = "linked.data.gov.au"
+host_aliases = ["linked.bdr.gov.au"]
+default_redirect_code = 307
+default_scheme = "https"
+
+[[test_redirect]]
+name = "bdr_base_html"
+comment = "Base linked.data.gov.au/dataset/bdr redirect, for HTML version"
+from = "dataset/bdr"
+headers = {accept="text/html"}
+to = "https://vocabs.bdr.gov.au/c/catalogs"
+
+[[test_redirect]]
+name = "bdr_base_ttl"
+comment = "Base linked.data.gov.au/dataset/bdr redirect, for Turtle version"
+from = "dataset/bdr"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/c/catalogs"
+
+[[test_redirect]]
+name = "bdr_catalog_wildcard_html"
+comment = "regex linked.data.gov.au/dataset/bdr/catalogs/* redirect, to https://vocabs.bdr.gov.au/c/catalogs/*"
+from = "dataset/bdr/catalogs/abis"
+scheme = "https"
+headers = {accept="text/html"}
+to = "https://vocabs.bdr.gov.au/c/catalogs/bdr-cat:abis"
+
+[[test_redirect]]
+name = "bdr_catalog_wildcard_ttl"
+comment = "regex linked.data.gov.au/dataset/bdr/catalogs/* redirect, to https://vocabs.bdr.gov.au/c/catalogs/*"
+from = "dataset/bdr/catalogs/abis"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/c/catalogs/bdr-cat:abis"
+
+[[test_redirect]]
+name = "bdr_datatypes_vocab_html"
+comment = "static linked.data.gov.au/dataset/bdr/datatypes vocab redirect, to https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
+from = "dataset/bdr/datatypes"
+scheme = "https"
+headers = {accept="text/html"}
+to = "https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
+
+[[test_redirect]]
+name = "bdr_datatypes_vocab_ttl"
+comment = "static linked.data.gov.au/dataset/bdr/datatypes vocab redirect, to https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
+from = "dataset/bdr/datatypes"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:datatypes"
+
+[[test_redirect]]
+name = "bdr_datatypes_vocab_ttl"
+comment = "static linked.data.gov.au/dataset/bdr/datatypes/WamNumber vocab redirect"
+from = "dataset/bdr/datatypes/WamNumber"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:datatypes/bdr-datatypes:WamNumber"
+
+[[test_redirect]]
+name = "bdr_obsprops_vocab_html"
+comment = "static linked.data.gov.au/dataset/bdr/obsprops vocab redirect, to https://vocabs.bdr.gov.au/v/vocab/bdr-ds:obsprops"
+from = "dataset/bdr/obsprops"
+scheme = "https"
+headers = {accept="text/html"}
+to = "https://vocabs.bdr.gov.au/v/vocab/bdr-ds:obsprops"
+
+[[test_redirect]]
+name = "bdr_obsprops_vocab_ttl"
+comment = "regex linked.data.gov.au/dataset/bdr/datatypes/WamNumber vocab redirect to prezv3 backend"
+from = "dataset/bdr/obsprops/DatasetsCount"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:obsprops/bdr-obsprops:DatasetsCount"
+
+[[test_redirect]]
+name = "bdr_orgs_vocab_ttl"
+comment = "static linked.data.gov.au/dataset/bdr/orgs vocab redirect, to prezv3 backend"
+from = "dataset/bdr/orgs"
+scheme = "https"
+headers = {accept="text/ttl"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs"
+
+[[test_redirect]]
+name = "bdr_orgs_vocab_ttl_with_mediatype_queryarg"
+comment = "static linked.data.gov.au/dataset/bdr/orgs vocab redirect, to prezv3 backend"
+from = "dataset/bdr/orgs?_mediatype=text/ttl"
+scheme = "https"
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs?_mediatype=text%2fttl"
+
+[[test_redirect]]
+name = "bdr_obsprops_vocab_ttl"
+comment = "regex linked.data.gov.au/dataset/bdr/orgs/wamuseum vocab concept redirect"
+from = "dataset/bdr/orgs/wamuseum"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs/bdr-orgs:wamuseum"
+
+[[test_redirect]]
+name = "test_qsa"
+comment = ""
+from = "dataset/bdr/orgs/wamuseum?_test=1"
+scheme = "https"
+headers = {accept="text/turtle"}
+to = "https://bdr.azure-api.net/prez/v3/v/vocab/bdr-ds:orgs/bdr-orgs:wamuseum?_test=1"
+
+[[test_redirect]]
+name = "test_qsa_overwrite"
+comment = ""
+from = "test/qsa/append?_works=true&_test=2"
+scheme = "https"
+headers = {accept="text/turtle"}
+# The redirection includes _test=1 so it overwrites the _test=2 query arg
+to = "https://test.com/append?_works=true&_test=1"
