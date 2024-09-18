@@ -21,9 +21,9 @@ def print_console_error(msg: str):
 #------- Fix up Python Path for site-packages and local dir -------
 # The cwd is probably /tmp/functions\\standby\\wwwroot because
 # the /home/site/wwwroot directory is read-only.
-existing_sys_path = '\n'.join(sys.path)
-root_logger.info(f"Current sys.path:\n{existing_sys_path}")
-print_console_error(f"Current sys.path:\n{existing_sys_path}")
+existing_sys_path = ','.join(sys.path)
+root_logger.info(f"Current sys.path: {existing_sys_path}")
+print_console_error(f"Current sys.path: {existing_sys_path}")
 h.flush()
 base_dir = Path("/home/site/wwwroot").resolve()
 if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path:
@@ -37,6 +37,8 @@ if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path:
         for p in python_dirs:
             if p.is_dir():
                 root_logger.debug(f"Adding {p} to sys.path")
+                h.flush()
+                print_console_error(f"Adding {p} to sys.path")
                 sys.path.insert(0, str(p))
                 break
         else:
@@ -54,6 +56,9 @@ from azure.functions import HttpRequest
 try:
     from src.factory import create_app
 except ImportError as e:
+    import traceback
+    formatted_exc = traceback.format_exc(e).replace("\n", "|")
+    print_console_error(f"ImportError: {e}, {formatted_exc}")
     root_logger.exception("Importing src.factory")
     create_app = None
 
