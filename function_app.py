@@ -7,10 +7,10 @@ from pathlib import Path
 root_logger = logging.getLogger()
 h = logging.StreamHandler(sys.stderr)
 root_logger.addHandler(h)
-if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "yes"):
-    root_logger.setLevel(logging.DEBUG)
-    for h in root_logger.handlers:
-        h.setLevel(logging.DEBUG)
+#if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "yes"):
+root_logger.setLevel(logging.DEBUG)
+for ha in root_logger.handlers:
+    ha.setLevel(logging.DEBUG)
 #---------------------------------------------------
 
 #------- Fix up Python Path for site-packages and local dir -------
