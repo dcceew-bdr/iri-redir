@@ -29,32 +29,38 @@ jobs:
       - name: Create and start virtual environment
         run: |
           python -m venv venv
-          source venv/bin/activate
+          . venv/bin/activate
           env
 
       - name: Install setup dependencies
         run: |
+          . venv/bin/activate
           pip install -U pip && pip install -r requirements.txt
-          env
 
       - name: Install testing dependencies
-        run: pip install -U pytest pytest-asyncio httpx
+        run: |
+          . venv/bin/activate
+          pip install -U pytest pytest-asyncio httpx
+        
 
       - name: Run Tests
-        run: env PYTHONPATH=. pytest test
+        run: |
+          . venv/bin/activate
+          env PYTHONPATH=. pytest test
 
       - name: Create and start deployment virtual environment
         run: |
-          deactivate
-          python -m venv .python_packages
-          source .python_packages/bin/activate
+          env -u VIRTUAL_ENV $pythonLocation/bin/python -m venv .python_packages
+          . .python_packages/bin/activate
 
       - name: Install deployment dependencies
-        run: pip install -U pip && pip install -r requirements.txt
+        run: |
+          . .python_packages/bin/activate
+          pip install -U pip && pip install -r requirements.txt
 
       - name: Zip artifact for deployment
         # Zip this including the .python_packages folder, but excluding the venv folder
-        run: zip release.zip ./* -r -x "venv" -x "venv/*" -x ".git" -x "__pycache__/*" -x "*.pyc"
+        run: zip release.zip ./* .python_packages -r -x "venv" -x "venv/*" -x ".git" -x "__pycache__/*" -x "*.pyc"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
