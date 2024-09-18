@@ -4,13 +4,18 @@ import os
 from pathlib import Path
 
 #------- Fix up Logging to Application Logger -------
+CONSOLE_LOG_PREFIX = "LanguageWorkerConsoleLog"
 root_logger = logging.getLogger()
+
 h = logging.StreamHandler(sys.stderr)
 root_logger.addHandler(h)
 #if os.getenv("PYTHON_ENABLE_DEBUG_LOGGING", "").lower() in ("true", "1", "t", "yes"):
 root_logger.setLevel(logging.DEBUG)
 for ha in root_logger.handlers:
     ha.setLevel(logging.DEBUG)
+
+def print_console_error(msg: str):
+    print(f"{CONSOLE_LOG_PREFIX} ERROR: {msg}", file=sys.stderr, flush=True)
 #---------------------------------------------------
 
 #------- Fix up Python Path for site-packages and local dir -------
@@ -18,11 +23,15 @@ for ha in root_logger.handlers:
 # the /home/site/wwwroot directory is read-only.
 existing_sys_path = '\n'.join(sys.path)
 root_logger.info(f"Current sys.path:\n{existing_sys_path}")
+print_console_error(f"Current sys.path:\n{existing_sys_path}")
+h.flush()
 base_dir = Path("/home/site/wwwroot").resolve()
 if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path:
     dest = base_dir / ".python_packages" / "lib" / "site-packages"
     if not dest.exists():
         root_logger.debug("Cannot find .python_packages/lib/site-packages, adding real site-packages")
+        h.flush()
+        print_console_error("Cannot find .python_packages/lib/site-packages, adding real site-packages")
         # Find the python version equivalent
         python_dirs = (base_dir / ".python_packages" / "lib").glob("python*")
         for p in python_dirs:
@@ -35,6 +44,8 @@ if "/home/site/wwwroot/.python_packages/lib/site-packages" in sys.path:
 if str(base_dir) not in sys.path:
     # Add the base dir here to the path, so it can find "src" package
     root_logger.info(f"Adding {base_dir} to sys.path")
+    h.flush()
+    print_console_error(f"Adding {base_dir} to sys.path")
     sys.path.insert(0, str(base_dir))
 #---------------------------------------------------
 
