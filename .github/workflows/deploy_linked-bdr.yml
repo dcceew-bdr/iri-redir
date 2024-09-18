@@ -50,11 +50,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    #environment:
+    #  name: 'Production'
+    #  url: ${{ steps.deploy-to-function.outputs.app-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+
 
     steps:
       - name: Download artifact from build job
@@ -77,8 +78,7 @@ jobs:
         id: deploy-to-function
         with:
           app-name: 'linked-bdr'
-          slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
-          
+          #slot-name: 'Production'
