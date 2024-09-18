@@ -52,7 +52,7 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ steps.deploy-to-function.outputs.app-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
 
@@ -77,8 +77,7 @@ jobs:
         id: deploy-to-function
         with:
           app-name: 'linked-bdr'
-          slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
-          
+          #slot-name: 'Production'
