@@ -30,9 +30,12 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+          env
 
       - name: Install setup dependencies
-        run: pip install -U pip && pip install -r requirements.txt
+        run: |
+          pip install -U pip && pip install -r requirements.txt
+          env
 
       - name: Install testing dependencies
         run: pip install -U pytest pytest-asyncio httpx
