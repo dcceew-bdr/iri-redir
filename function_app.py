@@ -1,16 +1,20 @@
-import os
-from typing import Union, TYPE_CHECKING
+import logging
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
 
 import azure.functions as func
 from azure.functions import HttpRequest
 try:
     from src.factory import create_app
 except ImportError as e:
-    raise
+    logging.exception(e)
     create_app = None
 
 
 if create_app is None:
+    logging.error(
+      "Cannot import src in the Azure function app. Check requirements.py and deployment logs."
+    )
     raise RuntimeError(
         "Cannot import src in the Azure function app. Check requirements.py and deployment logs."
     )
