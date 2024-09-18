@@ -50,11 +50,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-function.outputs.app-url }}
+    #environment:
+    #  name: 'Production'
+    #  url: ${{ steps.deploy-to-function.outputs.app-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+
 
     steps:
       - name: Download artifact from build job
