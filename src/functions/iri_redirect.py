@@ -261,7 +261,7 @@ async def make_redir(proto, host_list: List[str], path: str, query_params: Dict[
         dest_fn = redir_dests[redir_to_dest]
         redir_to = dest_fn(proto, host, path, None, request, **kwargs)
     append_route = used_record.get("append_route", False)
-    redir_code = used_record.get("code", use_default_redir_code)
+    redir_code = int(used_record.get("code", use_default_redir_code))
     qsa = used_record.get("qsa", use_default_qsa)
     if append_route:
         redir_to = "/".join((redir_to.rstrip("/"), orig_path))
