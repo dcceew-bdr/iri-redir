@@ -1,5 +1,5 @@
 [default]
-code = "307"
+code = 307
 virtualhost = "linked.data.gov.au"
 route_prefix = "/"
 host_aliases = ["linked.bdr.gov.au"]
