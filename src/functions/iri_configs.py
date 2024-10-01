@@ -9,6 +9,8 @@ from .iri_dests import dest_kind_map
 
 logger = getLogger()  # Root logger
 
+TRUTH_VALUES = (True, "true", 1, "1", "t", "yes")
+
 def find_regex_startsmatch(re_string: str):
     if re_string.startswith('^'):
         re_string = re_string[1:]
@@ -74,6 +76,7 @@ def load_all_defs(state: dict, force: bool = False):
 
         default_redir_code = 307
         default_route_prefix = '/'
+        default_allow_slash = False
         virtualhost = None
         host_aliases = []
         default_qsa = False
@@ -86,9 +89,12 @@ def load_all_defs(state: dict, force: bool = False):
                 default_route_prefix = this_def['default']['route_prefix']
             if 'host_aliases' in this_def['default']:
                 host_aliases = this_def['default']['host_aliases']
+            if 'allow_slash' in this_def['default']:
+                default_allow_slash_lit = this_def['default']['allow_slash']
+                default_allow_slash = default_allow_slash_lit in TRUTH_VALUES
             if 'qsa' in this_def['default']:
                 default_qsa_lit = this_def['default']['qsa']
-                default_qsa = default_qsa_lit in (True, "true", 1, "1", "t", "yes")
+                default_qsa = default_qsa_lit in TRUTH_VALUES
         if virtualhost is None or virtualhost == "@" or virtualhost == "":
             logger.info("[REDIRS] Loading definitions for Default host")
             virtualhost = ""
@@ -132,6 +138,7 @@ def load_all_defs(state: dict, force: bool = False):
                 else:
                     raise RuntimeError(f"Bad redirect value for {k}")
                 kind = new_entry.get("kind", "simple")
+
                 if str(kind).lower() == "regex":
                     try:
                         new_entry['_regex'] = regex.compile(k, flags=regex.IGNORECASE)
@@ -144,15 +151,30 @@ def load_all_defs(state: dict, force: bool = False):
                         has_conditional_regex.append(k)
                     else:
                         has_regex.append(k)
-                match_route = '/'.join((pfx.rstrip('/'), k)).lstrip('/')
-                if is_conditional:
-                    if match_route not in host_def['conditional_redirects']:
-                        host_def['conditional_redirects'][match_route] = []
-                    host_def['conditional_redirects'][match_route].append(new_entry)
-                    logger.debug(f"[REDIRS] Assigned conditional redirect: \"{match_route}\" -> \"{new_entry['to']}\"")
+                    allow_slash = False
                 else:
-                    host_def['redirects'][match_route] = new_entry
-                    logger.debug(f"[REDIRS] Assigned redirect: \"{match_route}\" -> \"{new_entry['to']}\"")
+                    allow_slash = new_entry.get("allow_slash", default_allow_slash)
+                match_route = '/'.join((pfx.rstrip('/'), k)).lstrip('/')
+                if allow_slash:
+                    # Remove the trailing slash, so we can a second one
+                    # with the trailing slash added
+                    match_route = match_route.rstrip('/')
+                    match_routes = [match_route, match_route+'/']
+                else:
+                    match_routes = [match_route]
+
+                if is_conditional:
+                    for match_route in match_routes:
+                        if match_route not in host_def['conditional_redirects']:
+                            host_def['conditional_redirects'][match_route] = []
+                        host_def['conditional_redirects'][match_route].append(new_entry)
+                        logger.debug(
+                            f"[REDIRS] Assigned conditional redirect: \"{match_route}\" -> \"{new_entry['to']}\""
+                        )
+                else:
+                    for match_route in match_routes:
+                        host_def['redirects'][match_route] = new_entry
+                        logger.debug(f"[REDIRS] Assigned redirect: \"{match_route}\" -> \"{new_entry['to']}\"")
             host_def['redirects']["_has_regex"] = has_regex
             host_def['conditional_redirects']["_has_regex"] = has_conditional_regex
         if 'rewrites' in this_def:

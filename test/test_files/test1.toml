@@ -11,6 +11,13 @@ headers = {accept="text/html"}
 to = "https://vocabs.bdr.gov.au/c/catalogs"
 
 [[test_redirect]]
+name = "bdr_base_with_slash_html"
+comment = "Base linked.data.gov.au/dataset/bdr redirect, for HTML version"
+from = "dataset/bdr/"
+headers = {accept="text/html"}
+to = "https://vocabs.bdr.gov.au/c/catalogs"
+
+[[test_redirect]]
 name = "bdr_base_ttl"
 comment = "Base linked.data.gov.au/dataset/bdr redirect, for Turtle version"
 from = "dataset/bdr"
@@ -37,6 +44,14 @@ to = "https://bdr.azure-api.net/prez/v3/c/catalogs/bdr-cat:abis"
 name = "bdr_datatypes_vocab_html"
 comment = "static linked.data.gov.au/dataset/bdr/datatypes vocab redirect, to https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
 from = "dataset/bdr/datatypes"
+scheme = "https"
+headers = {accept="text/html"}
+to = "https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
+
+[[test_redirect]]
+name = "bdr_datatypes_vocab_trailing_slash_html"
+comment = "static linked.data.gov.au/dataset/bdr/datatypes/ vocab redirect, to https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
+from = "dataset/bdr/datatypes/"
 scheme = "https"
 headers = {accept="text/html"}
 to = "https://vocabs.bdr.gov.au/v/vocab/bdr-ds:datatypes"
