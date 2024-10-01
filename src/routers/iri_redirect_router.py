@@ -115,9 +115,12 @@ async def index(request: Request) -> Response:
     app_domain_name = request.state.conf_server_name
     app_debug = request.state.conf_debug
     mut_query_params: Dict[str, str] = {k: v for k, v in request.query_params.items()}
-    # Note, path does not include leading slash
-    path = request.path_params.get("path", "")
-    request_scheme = request.url.scheme
+    # Note, path does not include leading slash, but may have a trailing slash
+    # /datasets/bdr => datasets/bdr
+    # /hello/ => hello/
+    # / => ""
+    path: str = request.path_params.get("path", "")
+    request_scheme: str = request.url.scheme
     host_list = []
     if "_host" in mut_query_params:
         host_list.append(mut_query_params["_host"].strip().lower())

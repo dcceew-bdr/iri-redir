@@ -4,27 +4,28 @@ virtualhost = "linked.data.gov.au"
 route_prefix = "/"
 host_aliases = ["linked.bdr.gov.au"]
 qsa = true
+allow_slash = false
 
 [rewrites]
 
 
 [redirects]
 # Base linked.data.gov.au/dataset/bdr redirect, to https://vocabs.bdr.gov.au/
-"_bdr_html" = { from="dataset/bdr", to="https://vocabs.bdr.gov.au/c/catalogs", condition={mediatype="html"}}
+"_bdr_html" = { from="dataset/bdr", to="https://vocabs.bdr.gov.au/c/catalogs", condition={mediatype="html"}, allow_slash=true}
 "_bdr_not_html" = { from="dataset/bdr", to="https://bdr.azure-api.net/prez/v3/c/catalogs", condition={not={mediatype="html"}}}
 
 # static linked.data.gov.au/dataset/bdr/catalogs root redirect, to https://vocabs.bdr.gov.au/c/catalogs
-"_bdr_catalogs_html" = { from="dataset/bdr/catalogs", to="https://vocabs.bdr.gov.au/c/catalogs", condition={mediatype="html"}}
+"_bdr_catalogs_html" = { from="dataset/bdr/catalogs", to="https://vocabs.bdr.gov.au/c/catalogs", condition={mediatype="html"}, allow_slash=true}
 "_bdr_catalogs_not_html" = { from="dataset/bdr/catalogs", to="https://bdr.azure-api.net/prez/v3/c/catalogs", condition={not={mediatype="html"}}}
 
 
-"^dataset/bdr/catalogs/(.*)" = {to="!bdr_prez_v3", kind="regex", prez_kind="catalog"}
-"dataset/bdr/datatypes" = { to="!bdr_prez_v3", prez_kind="vocab" }
-"^dataset/bdr/datatypes/(.*)" = { to="!bdr_prez_v3", kind="regex", prez_kind="concept", prez_parent="bdr-ds:datatypes" }
-"dataset/bdr/obsprops" = { to="!bdr_prez_v3", prez_kind="vocab" }
-"^dataset/bdr/obsprops/(.*)" = { to="!bdr_prez_v3", kind="regex", prez_kind="concept", prez_parent="bdr-ds:obsprops" }
-"dataset/bdr/orgs" = { to="!bdr_prez_v3", prez_kind="vocab" }
-"^dataset/bdr/orgs/(.*)" = { to="!bdr_prez_v3", kind="regex", prez_kind="concept", prez_parent="bdr-ds:orgs" }
+"^dataset/bdr/catalogs/(.+)" = {to="!bdr_prez_v3", kind="regex", prez_kind="catalog"}
+"dataset/bdr/datatypes" = { to="!bdr_prez_v3", prez_kind="vocab", allow_slash=true}
+"^dataset/bdr/datatypes/(.+)" = { to="!bdr_prez_v3", kind="regex", prez_kind="concept", prez_parent="bdr-ds:datatypes" }
+"dataset/bdr/obsprops" = { to="!bdr_prez_v3", prez_kind="vocab", allow_slash=true}
+"^dataset/bdr/obsprops/(.+)" = { to="!bdr_prez_v3", kind="regex", prez_kind="concept", prez_parent="bdr-ds:obsprops" }
+"dataset/bdr/orgs" = { to="!bdr_prez_v3", prez_kind="vocab", allow_slash=true}
+"^dataset/bdr/orgs/(.+)" = { to="!bdr_prez_v3", kind="regex", prez_kind="concept", prez_parent="bdr-ds:orgs" }
 
 "test/qsa/append" = "https://test.com/append?_test=1"
 

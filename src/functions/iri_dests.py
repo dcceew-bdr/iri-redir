@@ -27,7 +27,10 @@ HTML_MEDIATYPES = ["text/html", "application/xhtml+xml"]
 RDF_MEDIATYPES = ["text/turtle", "application/rdf+xml", "application/ld+json", "application/json"]
 
 def prez_v3_dest(proto, host, path, fragment: Optional[str], request, *, dest_params, **kwargs) -> str:
-    """Makes a new URI based on inputs, and dest params."""
+    # In general, Prezv3 translation does not work with trailing slashes in the path
+    # This is because the path splitting will split on the trailing slash
+    # and curie generation will not work correctly.
+    path = path.rstrip("/")
     if fragment:
         ns = f"{proto}://{host}/{path}#"
         localname = fragment
